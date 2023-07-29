@@ -23,11 +23,6 @@ class WordController{
 
     public $words;
 
-    public function __construct()
-    {
-
-    }
-
 
     public function handle_words(){
         header('Content-Type: application/json; charset=utf-8');
