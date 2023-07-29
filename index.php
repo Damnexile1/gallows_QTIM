@@ -15,7 +15,7 @@ switch($uri) {
         $controller->getWordsLen();
         break;
 
-    case 'api/isFullWords':
+    case '/api/isFullWords':
         $controller->isFullWords();
         break;
 

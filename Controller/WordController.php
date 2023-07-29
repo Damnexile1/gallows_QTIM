@@ -86,7 +86,6 @@ class WordController{
     public function isFullWords(){
         header('Content-Type: application/json; charset=utf-8');
 
-
         if($_SERVER['REQUEST_METHOD'] == 'POST') {
             $conn = $this->connectToDb();
             $data = json_decode(file_get_contents('php://input'), true);
@@ -95,10 +94,8 @@ class WordController{
                 http_response_code(400);
                 exit();
             }
-            var_dump($data);
 
             $userWord = $data["word"];
-
 
             $sql = "SELECT * FROM words";
             $result = $conn->query($sql);
