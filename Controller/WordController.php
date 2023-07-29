@@ -41,15 +41,13 @@ class WordController{
                 exit();
             }
 
-            $letter = $data['letter'];
-
-            $sql = "SELECT * FROM words";
-            $result = $conn->query($sql);
-
+            $stmt = $conn->prepare("SELECT * FROM words WHERE id = ?");
+            $stmt->bind_param("i", $data["id"]);
+            $stmt->execute();
+            $result = $stmt->get_result();
             $word = $result->fetch_array()["word"];
 
-//            $word = strtolower($this->getWord());
-//            var_dump($word);
+            $letter = $data['letter'];
 
             $positions = [];
 
@@ -68,7 +66,7 @@ class WordController{
             if(count($positions) > 0) {
                 $response = [
                   'status' => true,
-                  'letter' =>   implode(", ", $positions)
+                  'letter' =>   $positions
                 ];
 
             } else {
@@ -121,8 +119,6 @@ class WordController{
                 echo json_encode($response, JSON_UNESCAPED_UNICODE);
             }
 
-
-
         }
 
     }
@@ -132,8 +128,6 @@ class WordController{
     {
         header('Content-Type: application/json; charset=utf-8');
         $conn = $this->connectToDb();
-//        var_dump($conn);
-
 
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
@@ -148,23 +142,28 @@ class WordController{
                 $conn->query($sql);
 
 
-
             } else if ($randTheme == 'Одежда') {
                 $key = array_rand($this->wordsOfClothing);
                 $word = $this->wordsOfClothing[$key];
 
                 $sql = "INSERT INTO words (word) VALUES ('$word')";
                 $conn->query($sql);
-
             }
+
+            $stmt = $conn->prepare("SELECT * FROM words WHERE word = ?");
+            $stmt->bind_param("s", $word);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $id = $result->fetch_array()["id"];
 
             http_response_code(201);
 
             $response = [
                 'word len' => strlen($word)/2,
-                'слово' => $word,
-                'theme' => $randTheme
+                'theme' => $randTheme,
+                'game_id' => $id,
             ];
+
             echo json_encode($response, JSON_UNESCAPED_UNICODE);
         }
     }
